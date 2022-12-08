@@ -46,7 +46,7 @@ sudo apt install python3-pip
 touch requirements.txt
 git init
 -create branch remotly on gitlab
-git remote add origin https://gitlab.internal.ericsson.com/emajprz/backup_and_draft.git
+git remote add origin https://gitlab.internal.
 git add .
 git commit -m "first commit"
 git branch -M Django_on_k8s
