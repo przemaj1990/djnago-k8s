@@ -164,7 +164,28 @@ Usefull tips:
 `k logs <name>`
 end on: https://www.youtube.com/watch?v=NAOsLaB6Lfc&t=14254s&ab_channel=CodingEntrepreneurs
 
-## First Step:
+## New try on Kubernetes, resetup of this project on new enviroment:
+
+/home/cloud_user/Projects/Djnago-on-k8s/djnago-k8s/dev/django-k8s <- create here venv using:
+`python3.8 -m venv venv`
+`sudo apt install python3.8-venv` <- solved problem with virtualenv
+`source venv/bin/activate `
+`pip install pip --upgrade`
+`pip install -r requirements.txt`
+- I had some problem with installin vnev but finally after reinstall it start to work
+`source venv/bin/activate`
+`sudo docker-compose up --build`
+- there was issue to bring down docker compose and I solved this using: sudo aa-remove-unknown (base on: https://stackoverflow.com/questions/47223280/docker-containers-can-not-be-stopped-or-removed-permission-denied-error)
+`sudo docker-compose up --build`
+
+
+
+
+
+
+
+
+
 
 
 ## First Step:
@@ -173,60 +194,4 @@ end on: https://www.youtube.com/watch?v=NAOsLaB6Lfc&t=14254s&ab_channel=CodingEn
 ## First Step:
 
 ## Examples:
-```
-python3 create_ci.py
-    sekiiatr00121
-python3 clone_vm.py -s 'sekiius00202.exilis.seki.gic.ericsson.se' -u 'username_here' -p 'password_here!' --disable-ssl-verification -v 'sekiiatr00121' --template 'sekiiatr' --datacenter-name 'VxRail-Datacenter' --vm-folder 'Exilis ISP' --datastore-name 'VxRail-Virtual-SAN-Datastore-4e7f19e1-4b96-4933-bd2c-082b768b57f4' --cluster-name 'VxRail-Virtual-SAN-Cluster-4e7f19e1-4b96-4933-bd2c-082b768b57f4'
-    cloning VM...
-    VM cloned.
-python3 get_mac.py -v 'sekiiatr00121'
-    00:50:56:a5:7a:73
-    00:50:56:a5:5f:b8
-python3 update_hydra_mac.py sekiiatr00121 "mgmt" 00:50:56:a5:7a:73 "iac" 00:50:56:a5:5f:b8
-python3 pxe_lxgen.py sekiiatr00121 00:50:56:a5:7a:73
-    Added server  sekiiatr00121  with mac address 00:50:56:a5:7a:73 {'mac': '00:50:56:a5:7a:73', 'data': 'profile_home=lxgen profile=eis-eis-ubuntu-18.04 ip=dhcp ksdevice=bootif e_networking=dhcp hostname=sekiiatr00121 e_fact_team=estestteamcloudrancicd e_fact_profile=isp-server-hall-d e_fact_site=SERO e_fact_groups=base e_software=medium e_puppet_server=puppet.sero.gic.gricsson.se e_puppet_caserver=puppetca.sero.gic.ericsson.se e_rootpassword=$1$bc4RC4Z3$xTJ3EOyqzUQp7sRGdhxds/'}
-    {"message":"Mac created!"}
-    200
-```
 
-## Authentication:
-
-We used few way to use credentials inside pipline as well as scripts, all of them could be used seperatly or together and in effect give u possibility to achive similar effects:
-
-- Code from Andriej to get token for hydra:
-'''
-def get_hydra_config():
-    config_file_pathname = os.path.expanduser('~') + "/config.ini"
-    if not os.path.isfile(config_file_pathname):
-        sys.exit('Could not find config.ini with hydra_api_url and hydra_token') 
-    config = configparser.ConfigParser()
-    config.read(config_file_pathname)
-    if not config.has_section('hydra'):
-        sys.exit('could not find hydra section in config.ini')
-    return config
-def instantiate_hydra():
-        config = get_hydra_config()
-        hydra_url = config.get(section='hydra', option='hydra_api_url')
-        token = config.get(section='hydra', option='hydra_token')
-        return HydraLibrary(hydra_url=hydra_url, token=token)
-'''
-- in Jenkins pipline we used "VCENTER_CREDENTIALS = credentials('vcenter')" to access credential stored in secret key inside Jenkins, further in pipline we can access them using: '${env.VCENTER_CREDENTIALS_USR}' and '${env.VCENTER_CREDENTIALS_PSW}'.
-- we can also access the same credential from inside python scrpt using 'vcenter_user = os.environ['VCENTER_CREDENTIALS_USR']'
-
-## Faced problems:
-
-- We need to remember that we need to run pipline in production enviroment. In other case created VM will not receive ip address and in effect it will also not receive OS via PXE boot on the first boot. 
-- Way of using and update enviroment variable in each stage of pipline: When you issue sh directive, a new instance of shell (most likely bash) is created. As usual Unix processes, it inherits the environment variables of the parent. Your bash instance is then running your script. When your script sets an environment variable, the environment of bash is updated. Once your script ends, the bash process that ran the script is destroyed, and all its environment is destroyed with it. Example:
-'''
-script{
-  def script_output = sh(returnSTdout: true, script: """
-source /dev/bin/activate
-python3 /dev/script.py
-""")
-script_output = script_output.trim()
-env.VALUUE = script_output
-echo $env.VALUE
-'''
-
-
-- For future work it will be good to have one standard repo of passwords.
