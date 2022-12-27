@@ -1,33 +1,33 @@
 version: "3.3"
 services:
   
-  web:
-    depends_on:
-      - postgres_db
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    image: django-k8s:v1
-    environment:
-      - PORT=8020
-    env_file:
-      - web/.env
-    ports:
-      - "8020:8020"
-    command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && /app/entrypoint.sh"
-    volumes:
-      - statifiles:/app/statifiles/ 
+  # web:
+  #   depends_on:
+  #     - postgres_db
+  #   build:
+  #     context: ./web
+  #     dockerfile: Dockerfile
+  #   image: django-k8s:v1
+  #   environment:
+  #     - PORT=8020
+  #   env_file:
+  #     - web/.env
+  #   ports:
+  #     - "8020:8020"
+  #   command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && /app/entrypoint.sh"
+  #   volumes:
+  #     - statifiles:/app/statifiles/ 
   
   postgres_db:
     image: postgres
     restart: always
-    command: -p 5434
+    command: -p 5432
     env_file:
       - web/.env
     expose:
-      - 5434
+      - 5432
     ports:
-      - "5434:5434"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/posgresql/data
 
