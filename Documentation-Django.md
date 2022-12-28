@@ -188,13 +188,21 @@ end on: https://www.youtube.com/watch?v=NAOsLaB6Lfc&t=14254s&ab_channel=CodingEn
     - `kubectl exec pod-svc-test -- curl svc-clusterip`
     
 ## Start with kubernetes:
+
 `k apply -f k8s/nginx/deployment.yaml` - run base pod
 `k exec -it <pod> -- /bin/bas` to open terminal
 `k apply -f /home/cloud_user/Projects/Djnago-on-k8s/djnago-k8s/dev/django-k8s/k8s/apps/iac-python.yaml` to run example app on k8s
 - on labe nev I found problem with loadbalancing. As it appear to access pod from outside I need to use public ip of worker node, not master one. 
 and this seams to be some kind of bug. Interesting article: https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/ from k8s website.
 - i used 'NodePort' to expose app to outside world (insted of Loadbalancer from example as he is using digitalocean :) and I am not) 
-## First Step:
+
+## Build image and push it out to docker.io:
+- to find docker config.json: `sudo less /root/.docker/config.json`
+- `sudo docker build -t docker.io/przemaj1990/django-k8s:latest -f Dockerfile . ` build image before push
+- `sudo docker push docker.io/przemaj1990/django-k8s --all-tags` push all tags 
+- `kubectl create secret docker-registry regcred --docker-username=przemaj1990 --docker-password=<password> --docker-email=przemaj1990@gmail.com` to create secret for k8s to access docker.io
+- ` python -c "import secrets; print(secrets.token_urlsafe(32))"` to generate secrets for .env, or you can use django functionality: `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` 
+- 
 
 ## Examples:
 
