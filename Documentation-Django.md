@@ -175,22 +175,25 @@ end on: https://www.youtube.com/watch?v=NAOsLaB6Lfc&t=14254s&ab_channel=CodingEn
 - I had some problem with installin vnev but finally after reinstall it start to work
 `source venv/bin/activate`
 `sudo docker-compose up --build`
-- there was issue to bring down docker compose and I solved this using: sudo aa-remove-unknown (base on: https://stackoverflow.com/questions/47223280/docker-containers-can-not-be-stopped-or-removed-permission-denied-error)
+- there was issue to bring down docker compose and I solved this using: `sudo aa-remove-unknown` (base on: https://stackoverflow.com/questions/47223280/docker-containers-can-not-be-stopped-or-removed-permission-denied-error)
 `sudo docker-compose up --build`
-
-
-
-
-
-
-
-
-
-
-
-## First Step:
-
-
+`python manage.py shell / makemigrations / migrate / runserver`
+`python manage.py shell`
+`from django.conf import settings` `print(settings.DB_IS_AVAIL)`
+- using docker-compose I can bring up databse posgresql stored on volumes:
+      - postgres_data:/var/lib/posgresql/data
+- and there is presistent data stored. So in any situation I can bring up django :) seams to be up to date with course. 
+- found problem with CoreDNS: I just restarted it: `kubectl rollout restart -n kube-system deployment/coredns` and check logs using: `kubectl logs --namespace=kube-system -l k8s-app=kube-dns`, additional useful website: https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/ and commands to check connectibvity:
+    - `kubectl exec -i -t dnsutils -- nslookup kubernetes.default`
+    - `kubectl exec pod-svc-test -- curl svc-clusterip`
+    
+## Start with kubernetes:
+`k apply -f k8s/nginx/deployment.yaml` - run base pod
+`k exec -it <pod> -- /bin/bas` to open terminal
+`k apply -f /home/cloud_user/Projects/Djnago-on-k8s/djnago-k8s/dev/django-k8s/k8s/apps/iac-python.yaml` to run example app on k8s
+- on labe nev I found problem with loadbalancing. As it appear to access pod from outside I need to use public ip of worker node, not master one. 
+and this seams to be some kind of bug. Interesting article: https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/ from k8s website.
+- i used 'NodePort' to expose app to outside world (insted of Loadbalancer from example as he is using digitalocean :) and I am not) 
 ## First Step:
 
 ## Examples:
