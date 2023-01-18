@@ -204,5 +204,28 @@ and this seams to be some kind of bug. Interesting article: https://kubernetes.i
 - ` python -c "import secrets; print(secrets.token_urlsafe(32))"` to generate secrets for .env, or you can use django functionality: `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` 
 - 
 
-## Examples:
-
+## Return to project after moment:
+### Again work on network problems:
+- `sudo aa-remove-unknown` to resolve peroblem with old not down docker 
+- `source venv/bin/activate`
+- `python manage.py runserver` 
+- I faced some problem with running stadard service + deployment, but iac-python.yaml seams to work correctly:
+` k apply -f iac-python.yaml`, and before I also restarted core dns: `kubectl rollout restart -n kube-system deployment/coredns`
+- `k get services` or `k get endpoints`
+### Build again using private repo:
+- to find docker config.json: `sudo less /root/.docker/config.json`
+- `sudo docker build -t docker.io/przemaj1990/django-k8s:latest -f Dockerfile . ` build image before push
+- `sudo docker push docker.io/przemaj1990/django-k8s --all-tags` push all tags
+- `python -c "import secrets;print(secrets.token_urlsafe(32))"` to generate secrets
+- `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` second option to generate secret key using django utils
+- he is setup everything again for new db located externally, so modifing .env file. 
+### Kubernetes secrets from env:
+- `k create secret generic django-k8s-web-prod-env --from-env-file=.env` to create secrets for k8s
+- `k get secrets -o yaml <name>` and when config changed just `k delete secret <name>` and create it again.
+### ssl mode:
+- `DB_IGNORE_SSL=true` add to .env && necessary config in seetings.
+### imagePullSecrets:
+- base on: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+- `cat ~/.docker/config.json` && `kubectl create secret generic regcred --from-file=.dockerconfigjson=<path/to/.docker/config.json> --type=kubernetes.io/dockerconfigjson` or we can `kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>`
+- `kubectl get secret regcred --output=yaml` and to decode: `kubectl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode`
+- `k apply -f /home/cloud_user/Projects/Djnago-on-k8s/djnago-k8s/dev/django-k8s/k8s/apps/django-k8s-web.yaml` I started app and ofc faced problem like ALLOWED_HOSTS. 
