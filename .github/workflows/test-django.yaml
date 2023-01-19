@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: djnago-k8s/dev/django-k8s/web
+        working-directory: dev/django-k8s/web
     env:
       DJANGO_SECRET_KEY: test-key-not-good-maybe-make-one-better
     strategy:
