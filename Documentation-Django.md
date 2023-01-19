@@ -255,4 +255,5 @@ with an argument other than "/var/lib/postgresql/data".```
 ## Deployment Guide: 
 - add seperate document: deployment-guide.md in clear way describing steps of deployment.
 
-##
+## GithuAction:
+- added action, problem with path: /web that should be the same like on git so dev/django-k8s/web.
