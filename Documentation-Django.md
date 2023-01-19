@@ -246,3 +246,13 @@ with an argument other than "/var/lib/postgresql/data".```
 - I faced problem with dns, and django not possible to resolve name of postgres: "django.db.utils.OperationalError: could not translate host name "postgres" to address: Temporary failure in name resolution"
 - problem was probably on coredns so restart of coredns helped (`kubectl rollout restart -n kube-system deployment/coredns`). Plus I working on thsot using guide: https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/. 
 - finally I was able to run: `bash migrate.sh` and final migration + be able to log using correct credential into admin account. 
+- other usefull site and example: 
+    - https://datagraphi.com/blog/post/2021/2/10/kubernetes-guide-deploying-a-machine-learning-app-built-with-django-react-and-postgresql-using-kubernetes
+    - https://medium.com/@tech_with_mike/how-to-deploy-a-django-app-over-a-kubernetes-cluster-with-video-bc5c807d80e2
+    - https://mattermost.com/blog/orchestrate-django-application-with-kubernetes/
+    - https://betterprogramming.pub/how-to-deploy-a-django-application-with-kubernetes-f5814b0688bf
+
+## Deployment Guide: 
+- add seperate document: deployment-guide.md in clear way describing steps of deployment.
+
+##
