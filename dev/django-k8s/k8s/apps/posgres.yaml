@@ -1,5 +1,5 @@
-apiVersion: v1
 kind: PersistentVolume
+apiVersion: v1
 metadata:
   name: postgres-pv
   labels:
@@ -7,63 +7,52 @@ metadata:
 spec:
   storageClassName: manual
   capacity:
-    storage: 2Gi
+    storage: 100M # total capacity for this persistent volume
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: /data/postgres-pv
-
+  hostPath: # where pesistent volume is created on the kubernetes node (needs to be /data for minikube)
+    path: "/data"
 ---
-
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolumeClaim #claim a portion of persistent volume
 metadata:
-  name: postgres-pvc
   labels:
-    type: local
+    app: postgres
+  name: postgres-pv-claim
 spec:
   storageClassName: manual
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce # mount as read-write by a single node
   resources:
     requests:
-      storage: 2Gi
-  volumeName: postgres-pv
+      storage: 100M # storage capacity consumed from the persistent volume
 
 ---
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-cluster-ip-service
-spec:
-  selector:
-    app: postgres-container
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-container
+      name: postgres
   template:
     metadata:
       labels:
-        app: postgres-container
+        name: postgres
     spec:
       containers:
-        - name: postgres-container
-          image: postgres
+        - name: postgres
+          image: postgres:12
+          ports:
+            - containerPort: 5432
           env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: django-k8s-web-prod-env
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -74,17 +63,27 @@ spec:
                 secretKeyRef:
                   name: django-k8s-web-prod-env
                   key: POSTGRES_DB
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: django-k8s-web-prod-env
-                  key: POSTGRES_USER
-          ports:
-            - containerPort: 5432
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           volumeMounts:
-            - name: postgres-volume-mount
-              mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-volume-mount
       volumes:
         - name: postgres-volume-mount
           persistentVolumeClaim:
-            claimName: postgres-pvc
+            claimName: postgres-pv-claim
+---
+# START Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+  selector:
+    name: postgres
+# END SERVICE

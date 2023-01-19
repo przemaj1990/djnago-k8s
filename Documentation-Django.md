@@ -229,3 +229,20 @@ and this seams to be some kind of bug. Interesting article: https://kubernetes.i
 - `cat ~/.docker/config.json` && `kubectl create secret generic regcred --from-file=.dockerconfigjson=<path/to/.docker/config.json> --type=kubernetes.io/dockerconfigjson` or we can `kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>`
 - `kubectl get secret regcred --output=yaml` and to decode: `kubectl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode`
 - `k apply -f /home/cloud_user/Projects/Djnago-on-k8s/djnago-k8s/dev/django-k8s/k8s/apps/django-k8s-web.yaml` I started app and ofc faced problem like ALLOWED_HOSTS. 
+- `k exec -it <pod name> -- /bin/bash`
+
+## Setup Posgresql on k8s in a way that will allow connection between django&posgrsql:
+- First try base on: https://mattermost.com/blog/orchestrate-django-application-with-kubernetes/ 
+- I faced problem with: ``` Data page checksums are disabled.
+
+initdb: directory "/var/lib/postgresql/data" exists but is not empty
+If you want to create a new database system, either remove or empty
+the directory "/var/lib/postgresql/data" or run initdb
+with an argument other than "/var/lib/postgresql/data".```
+- solved using: https://github.com/docker-library/postgres/issues/263 and it seams that databse start normally
+- move to next part so try to migrate data from django to database:
+- `k exec -it django-k8s-web-deployment-876654dc5-64qzk -- /bin/bash`
+- `source /opt/venv/bin/activate` & `python manage.py migrate` 
+- I faced problem with dns, and django not possible to resolve name of postgres: "django.db.utils.OperationalError: could not translate host name "postgres" to address: Temporary failure in name resolution"
+- problem was probably on coredns so restart of coredns helped (`kubectl rollout restart -n kube-system deployment/coredns`). Plus I working on thsot using guide: https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/. 
+- finally I was able to run: `bash migrate.sh` and final migration + be able to log using correct credential into admin account. 
