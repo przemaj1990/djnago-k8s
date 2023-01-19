@@ -257,3 +257,4 @@ with an argument other than "/var/lib/postgresql/data".```
 
 ## GithuAction:
 - added action, problem with path: /web that should be the same like on git so dev/django-k8s/web.
+- finished at end of : Github Actions  Test Django Automatically
