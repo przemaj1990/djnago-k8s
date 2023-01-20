@@ -1,15 +1,18 @@
-name: Django CI & Posgresql Test
+name: Build Docker COntainer & Push to image repository
 
 on:
   workflow_call:
   workflow_dispatch:
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ main ]
+  
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  django_test:
+  test_django:
+    uses: przemaj1990/djnago-k8s/.github/workflow/test-django.yaml@main
+  docker_build:
     runs-on: ubuntu-latest
     defaults:
       run:
