@@ -11,7 +11,7 @@ on:
 
 jobs:
   test_django:
-    uses: przemaj1990/djnago-k8s/.github/workflow/test-django.yaml@main
+    uses: przemaj1990/djnago-k8s/.github/workflows/test-django.yaml@main
   docker_build:
     runs-on: ubuntu-latest
     env:
