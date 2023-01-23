@@ -28,12 +28,14 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Get short SHA
+      run: echo "SHORT_SHA=$("${{ github.sha }}".SubString(0, 8))" >> $env:GITHUB_ENV
     - name: Build container image
       working-directory: dev/django-k8s/web
       run: |
         docker build -f Dockerfile \
           -t docker.io/przemaj1990/django-k8s:latest \
-          -t docker.io/przemaj1990/django-k8s:${GITHUB_SHA::7} \
+          -t docker.io/przemaj1990/django-k8s:${{ env.SHORT_SHA }} \
           .
     - name: Push image
       run: |
@@ -49,7 +51,7 @@ jobs:
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
-        args: --insecure-skip-tls-verify set image deployment/django-k8s-web-deployment django-k8s-web=docker.io/przemaj1990/django-k8s:${GITHUB_SHA::7}
+        args: --insecure-skip-tls-verify set image deployment/django-k8s-web-deployment django-k8s-web=docker.io/przemaj1990/django-k8s:${{ env.SHORT_SHA }}
     - name: Wait for rollout to finish
       uses: myrotvorets/kubectl-action@2.0.0
       with:
