@@ -38,9 +38,15 @@ jobs:
     - name: Push image
       run: |
         docker push docker.io/przemaj1990/django-k8s --all-tags
-    - name: Setup kubectl
+    - name: test conntection to k8s
       uses: myrotvorets/kubectl-action@2.0.0
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
         args: --insecure-skip-tls-verify get pods
+    - name: Run deployment 
+      uses: myrotvorets/kubectl-action@2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        version: latest
+        args: --insecure-skip-tls-verify pply -f /home/cloud_user/Projects/Djnago-on-k8s/djnago-k8s/dev/django-k8s/k8s/apps/dnstshoot.yaml
