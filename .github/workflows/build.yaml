@@ -56,12 +56,6 @@ jobs:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
         args: --insecure-skip-tls-verify rollout status deployment/django-k8s-web-deployment
-    - name: Wait for rollout to finish
-      uses: myrotvorets/kubectl-action@2.0.0
-      with:
-        config: ${{ secrets.KUBE_CONFIG_DATA }}
-        version: latest
-        args: --insecure-skip-tls-verify rollout status deployment/django-k8s-web-deployment
     - name: Run Migration
       uses: myrotvorets/kubectl-action@2.0.0
       with:
