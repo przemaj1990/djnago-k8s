@@ -17,6 +17,7 @@ jobs:
     needs: [test_django_job]
     env:
       DJANGO_SECRET_KEY: test-key-not-good-maybe-make-one-better
+      CLUSTER_NAME: 54.195.23.135
     steps:
     - name:  Checkout code.
       uses: actions/checkout@v2
@@ -37,3 +38,10 @@ jobs:
     - name: Push image
       run: |
         docker push docker.io/przemaj1990/django-k8s --all-tags
+    - name: Setup kubectl
+      uses: justin0u0/setup-kubectl@v1
+      with:
+        kubectl-version: stable
+        cluster-certificate-authority-data: ${{ secrets.KUBERNETES_CLUSTER_CLIENT_CERTIFICATE_AUTHORITY_DATA }}
+        cluster-server: ${{ secrets.KUBERNETES_CLUSTER_SERVER }}
+        credentials-token: ${{ secrets.KUBERNETES_CREDENTIALS_TOKEN }}

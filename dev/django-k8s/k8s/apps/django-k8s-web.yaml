@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: django-k8s-web
-        image: docker.io/przemaj1990/django-k8s:latest
+        image: docker.io/przemaj1990/django-k8s:f6ffa76-39660
         imagePullPolicy: Always
         envFrom:
           - secretRef:
