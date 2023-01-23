@@ -33,7 +33,7 @@ jobs:
       run: |
         docker build -f Dockerfile \
           -t docker.io/przemaj1990/django-k8s:latest \
-          -t docker.io/przemaj1990/django-k8s:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
+          -t docker.io/przemaj1990/django-k8s:${GITHUB_SHA::7} \
           .
     - name: Push image
       run: |
@@ -49,7 +49,7 @@ jobs:
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
-        args: --insecure-skip-tls-verify set image deployment/django-k8s-web-deployment django-k8s-web=docker.io/przemaj1990/django-k8s:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+        args: --insecure-skip-tls-verify set image deployment/django-k8s-web-deployment django-k8s-web=docker.io/przemaj1990/django-k8s:${GITHUB_SHA::7}
     - name: Wait for rollout to finish
       uses: myrotvorets/kubectl-action@2.0.0
       with:
