@@ -262,3 +262,6 @@ with an argument other than "/var/lib/postgresql/data".```
 - how to add secrets in github: https://github.com/Azure/actions-workflow-samples/blob/master/assets/create-secrets-for-GitHub-workflows.md
 - end on 4:15.
 - https://github.com/marketplace?type=actions&query=kubectl-action+ <- marketplace with already prepared actions
+- I faced probelm with connection to k8s as it is behind proxy/on cloud. So to access it I used https://github.com/marketplace/actions/run-kubectl
+with `cat .kube/config` but with changed ip to poing public ip. As effect i faced issue with: 'Invalid x509 certificate for kubernetes master'
+wich i solved using: `--insecure-skip-tls-verify` in args sended from git to k8s.
