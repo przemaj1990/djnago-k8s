@@ -44,9 +44,27 @@ jobs:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
         args: --insecure-skip-tls-verify get pods
-    - name: Run deployment 
+    - name: Update Deployemnt Image
       uses: myrotvorets/kubectl-action@2.0.0
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
-        args: --insecure-skip-tls-verify apply -f dev/django-k8s/k8s/apps/dnstshoot.yaml
+        args: --insecure-skip-tls-verify set image deployment/django-k8s-web-deployment django-k8s-web=docker.io/przemaj1990/django-k8s:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+    - name: Wait for rollout to finish
+      uses: myrotvorets/kubectl-action@2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        version: latest
+        args: --insecure-skip-tls-verify rollout status deployment/django-k8s-web-deployment
+    - name: Wait for rollout to finish
+      uses: myrotvorets/kubectl-action@2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        version: latest
+        args: --insecure-skip-tls-verify rollout status deployment/django-k8s-web-deployment
+    - name: Run Migration
+      uses: myrotvorets/kubectl-action@2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        version: latest
+        args: --insecure-skip-tls-verify exec -it $(kubectl get pod -l=app=django-k8s-web-deployment -o NAME | tail -n 1) -- bash /app/migrate.sh
