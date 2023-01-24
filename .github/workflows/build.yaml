@@ -49,6 +49,12 @@ jobs:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
         args: --insecure-skip-tls-verify get pods
+    # - name: Update Deployment Secrets
+    #   uses: myrotvorets/kubectl-action@2.0.0
+    #   with:
+    #     config: ${{ secrets.KUBE_CONFIG_DATA }}
+    #     version: latest
+    #     args: --insecure-skip-tls-verify get pods
     - name: Update Deployemnt Image
       uses: myrotvorets/kubectl-action@2.0.0
       with:
