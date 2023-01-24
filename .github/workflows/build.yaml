@@ -43,35 +43,31 @@ jobs:
     - name: Push image
       run: |
         docker push docker.io/przemaj1990/django-k8s --all-tags
-    - name: test conntection to k8s
-      uses: tale/kubectl-action@v1
+    - name: Update secrets
+      uses: myrotvorets/kubectl-action@2.0.0
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
-        run: kubectl --insecure-skip-tls-verify get pods
-    # - name: Update secrets
-    #   uses: tale/kubectl-action@v1
-    #   with:
-    #     base64-kube-config: ${{ secrets.KUBE_CONFIG_DATA }}
-    #     run: |
-    #       cat << EOF >> dev/django-k8s/web/.env
-    #       DEBUG=1
-    #       REGION=texas
-    #       DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
-    #       DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
-    #       DJANGO_SUERPUSER_EMAIL=${{ secrets.DJANGO_SUERPUSER_EMAIL }}
-    #       DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
-    #       ENV_ALLOW_HOST=${{ secrets.ENV_ALLOW_HOST }}
-    #       DB_IGNORE_SSL=t${{ secrets.DB_IGNORE_SSL }}rue
-    #       POSTGRES_READY=${{ secrets.POSTGRES_READY }}
-    #       POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-    #       POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-    #       POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-    #       POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-    #       POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
-    #       EOF
-    #       less dev/django-k8s/web/.env
-    #       kubectl delete secret django-k8s-web-prod-env
-    #       kubectl create secret generic django-k8s-web-prod-env --from-env-file=dev/django-k8s/web/.env
+        version: latest
+        run: |
+          cat << EOF >> dev/django-k8s/web/.env
+          DEBUG=1
+          REGION=texas
+          DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+          DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+          DJANGO_SUERPUSER_EMAIL=${{ secrets.DJANGO_SUERPUSER_EMAIL }}
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          ENV_ALLOW_HOST=${{ secrets.ENV_ALLOW_HOST }}
+          DB_IGNORE_SSL=t${{ secrets.DB_IGNORE_SSL }}rue
+          POSTGRES_READY=${{ secrets.POSTGRES_READY }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+          EOF
+          less dev/django-k8s/web/.env
+          kubectl delete secret django-k8s-web-prod-env
+          kubectl create secret generic django-k8s-web-prod-env --from-env-file=dev/django-k8s/web/.env
     - name: Update Deployemnt Image
       uses: myrotvorets/kubectl-action@2.0.0
       with:
