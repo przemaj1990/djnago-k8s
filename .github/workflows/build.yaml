@@ -71,4 +71,4 @@ jobs:
       uses: tale/kubectl-action@v1
       with:
         base64-kube-config: ${{ secrets.KUBE_CONFIG_DATA }}
-        run: --insecure-skip-tls-verify exec -it $(kubectl get pod -l=app=django-k8s-web-deployment -o NAME | tail -n 1) -- bash /app/migrate.sh
+        run: --insecure-skip-tls-verify exec -it $(kubectl get pod -l app=django-k8s-web-deployment -o NAME | tail -n 1) -- bash /app/migrate.sh
