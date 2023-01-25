@@ -62,12 +62,18 @@ jobs:
         POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
         EOF
         less dev/django-k8s/web/.env
-    - name: Update Deployemnt Image
+    - name: Update Secret 1
       uses: myrotvorets/kubectl-action@2.0.0
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
-        args: delete secret django-k8s-web-prod-env && kubectl create secret generic django-k8s-web-prod-env --from-env-file=dev/django-k8s/web/.env
+        args: delete secret django-k8s-web-prod-env
+    - name: Update Secret 2
+      uses: myrotvorets/kubectl-action@2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        version: latest
+        args: kubectl create secret generic django-k8s-web-prod-env --from-env-file=dev/django-k8s/web/.env
     - name: Update Deployemnt Image
       uses: myrotvorets/kubectl-action@2.0.0
       with:
