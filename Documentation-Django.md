@@ -265,4 +265,4 @@ with an argument other than "/var/lib/postgresql/data".```
 - I faced probelm with connection to k8s as it is behind proxy/on cloud. So to access it I used https://github.com/marketplace/actions/run-kubectl
 with `cat .kube/config` but with changed ip to poing public ip. As effect i faced issue with: 'Invalid x509 certificate for kubernetes master'
 wich i solved using: `--insecure-skip-tls-verify` in args sended from git to k8s.
-- 
+- secrets.KUBE_CONFIG_DATA - setup: `vim kubeconfig-github` && `base64 kubeconfig-github > kubeconfog4`
