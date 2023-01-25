@@ -267,3 +267,6 @@ with `cat .kube/config` but with changed ip to poing public ip. As effect i face
 wich i solved using: `--insecure-skip-tls-verify` in args sended from git to k8s.
 - secrets.KUBE_CONFIG_DATA - setup: `vim kubeconfig-github` && `base64 kubeconfig-github > kubeconfog4`
 - force rollout of whole deployment: `kubectl rollout restart deployment/django-k8s-web-deployment`
+
+## Staticfiles using AWS:
+- finished at 4:33
