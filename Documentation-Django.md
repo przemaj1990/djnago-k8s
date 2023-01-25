@@ -266,3 +266,4 @@ with an argument other than "/var/lib/postgresql/data".```
 with `cat .kube/config` but with changed ip to poing public ip. As effect i faced issue with: 'Invalid x509 certificate for kubernetes master'
 wich i solved using: `--insecure-skip-tls-verify` in args sended from git to k8s.
 - secrets.KUBE_CONFIG_DATA - setup: `vim kubeconfig-github` && `base64 kubeconfig-github > kubeconfog4`
+- force rollout of whole deployment: `kubectl rollout restart deployment/django-k8s-web-deployment`

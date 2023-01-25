@@ -66,13 +66,13 @@ jobs:
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
-        args: delete secret django-k8s-web-prod-env
+        args: --insecure-skip-tls-verify delete secret django-k8s-web-prod-env
     - name: Update Secret 2
       uses: myrotvorets/kubectl-action@2.0.0
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         version: latest
-        args: kubectl create secret generic django-k8s-web-prod-env --from-env-file=dev/django-k8s/web/.env.new
+        args: --insecure-skip-tls-verify create secret generic django-k8s-web-prod-env --from-env-file=dev/django-k8s/web/.env.new
     - name: Update Deployemnt Image
       uses: myrotvorets/kubectl-action@2.0.0
       with:
