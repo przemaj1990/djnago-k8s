@@ -1,6 +1,7 @@
 pipeline { 
     agent any 
     environment {
+        TEST="test"
         
    }
     options {
@@ -12,6 +13,7 @@ pipeline {
                 script {
                     try {
                         sh """
+                            echo ${TEST}
                             python3 -m venv ${WORKSPACE}/.venv_${BUILD_NUMBER}
                             source ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
                             python3 -m pip install --upgrade pip
