@@ -1,9 +1,29 @@
 pipeline { 
     agent any 
+    environment {
+        
+   }
     options {
         skipStagesAfterUnstable()
     }
     stages {
+        stage('Prepare enviroment') { 
+            steps { 
+                script {
+                    try {
+                        sh """
+                            python3 -m venv ${WORKSPACE}/.venv_${BUILD_NUMBER}
+                            source ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
+                            python3 -m pip install --upgrade pip
+                            pip install --quiet -r ${WORKSPACE}/dev/django-k8s/web/requirements.txt
+                        """
+                        } catch (err) {
+                            echo "Create virtual environment failed: ${err.getMessage()}"
+                            error('Failed to prepare virtual environment, please check logs')
+                        }
+                    }
+            }
+        }
         stage('Build') { 
             steps { 
                 echo 'make' 
