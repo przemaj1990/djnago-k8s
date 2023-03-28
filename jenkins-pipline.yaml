@@ -15,8 +15,11 @@ pipeline {
                         sh """
                             echo ${TEST}
                             python3 -m venv ${WORKSPACE}/.venv_${BUILD_NUMBER}
+                            echo ${TEST}2
                             source ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
+                            echo ${TEST}3
                             python3 -m pip install --upgrade pip
+                            echo ${TEST}4
                             pip install --quiet -r ${WORKSPACE}/dev/django-k8s/web/requirements.txt
                         """
                         } catch (err) {
