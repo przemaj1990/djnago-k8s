@@ -17,7 +17,7 @@ pipeline {
                             python3 -m venv ${WORKSPACE}/.venv_${BUILD_NUMBER}
                             echo ${TEST}2
                             echo ${WORKSPACE}/.venv_${BUILD_NUMBER}
-                            source ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
+                            . ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
                             echo ${TEST}3
                             python3 -m pip install --upgrade pip
                             echo ${TEST}4
