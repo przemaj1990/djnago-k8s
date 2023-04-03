@@ -41,11 +41,31 @@ pipeline {
                 }
             }
         }
-        stage('Build?'){
+        stage('Run on remote host'){
             steps {
-                
-                echo 'make check'
-                echo 'reports/**/*.xml' 
+                withCredentials([usernamePassword(credentialsId: 'ubuntu18size1_credentials', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                    sshPublisher(
+                        failOnError: true,
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'Ubuntu18Size1',
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$USERPASS"
+                                ], 
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'dist/trainSchedule.zip',
+                                        removePrefix: 'dist/',
+                                        remoteDirectory: '/tmp',
+                                        execCommand: 'sudo apt update'
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                }
             }
         }
         stage('Deploy') {
