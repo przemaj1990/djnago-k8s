@@ -57,9 +57,9 @@ pipeline {
                                 ], 
                                 transfers: [
                                     sshTransfer(
-                                        sourceFiles: 'dist/trainSchedule.zip',
+                                        sourceFiles: '${WORKSPACE}/'
                                         removePrefix: 'dist/',
-                                        remoteDirectory: '/tmp',
+                                        remoteDirectory: '/tmp/${WORKSPACE}',
                                         execCommand: 'ip a'
                                     )
                                 ]
