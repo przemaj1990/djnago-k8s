@@ -57,9 +57,9 @@ pipeline {
                                 ], 
                                 transfers: [
                                     sshTransfer(
-                                        sourceFiles: '${WORKSPACE}/',
+                                        sourceFiles: '${WORKSPACE}/dev/django-k8s/web/requirements.txt',
                                         removePrefix: '${WORKSPACE}/',
-                                        remoteDirectory: '/tmp/${WORKSPACE}',
+                                        remoteDirectory: '/tmp',
                                         execCommand: 'ip a'
                                     )
                                 ]
