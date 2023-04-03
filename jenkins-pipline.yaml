@@ -70,8 +70,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo "input 'Does the staging environment look OK?'"
-                echo 'milestone(1)'
+                input 'Does the staging environment look OK?'
+                milestone(1)
                 echo 'make publish'
             }
         }
