@@ -33,6 +33,7 @@ pipeline {
                 sh """
                 . ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
                 python3 ${WORKSPACE}/dev/django-k8s/web/manage.py test
+                echo 'test'
                 """
                 }catch (err) {
                             echo "Create virtual environment failed: ${err.getMessage()}"
