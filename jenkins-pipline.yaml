@@ -57,8 +57,8 @@ pipeline {
                                 ], 
                                 transfers: [
                                     sshTransfer(
-                                        sourceFiles: '${WORKSPACE}/'
-                                        removePrefix: 'dist/',
+                                        sourceFiles: '${WORKSPACE}/',
+                                        removePrefix: '${WORKSPACE}/',
                                         remoteDirectory: '/tmp/${WORKSPACE}',
                                         execCommand: 'ip a'
                                     )
