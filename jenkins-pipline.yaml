@@ -2,7 +2,7 @@ pipeline {
     agent any 
     environment {
         TEST="test"
-        
+        DOCKER_IMAGE_NAME = "willbla/train-schedule"
    }
     options {
         skipStagesAfterUnstable()
@@ -73,6 +73,10 @@ pipeline {
                 input 'Does the staging environment look OK?'
                 milestone(1)
                 echo 'make publish'
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'test-k8s.yaml',
+                    enableConfigSubstitution: true
             }
         }
     }
