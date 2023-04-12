@@ -1,36 +1,35 @@
-kind: Service
-apiVersion: v1
-metadata:
-  name: train-schedule-service
-spec:
-  type: NodePort
-  selector:
-    app: train-schedule
-  ports:
-  - protocol: TCP
-    port: 8080
-    nodePort: 8080
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: train-schedule-deployment
+  name: deployment #The name of the Kubernetes Deployment to be created in the Kubernetes cluster
   labels:
-    app: train-schedule
+    app: react-app
 spec:
-  replicas: 2
+  replicas: 2 #The number of pods to be created in the Kubernetes cluster for the React.js application container
   selector:
     matchLabels:
-      app: train-schedule
+      app: react-app
   template:
     metadata:
       labels:
-        app: train-schedule
+        app: react-app 
     spec:
       containers:
-      - name: train-schedule
-        image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
+      - name: react-app #The name of the react.js application container
+        image: bravinwasike/react-app:latest #The Docker image for building the React.js application container
         ports:
-        - containerPort: 8080
+        - containerPort: 3000 #The port for the React.js application   container
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service #The name of the Kubernetes Service to be created in the Kubernetes cluster
+spec:
+  selector:
+    app: react-app 
+  type: LoadBalancer #Type of the Kubernetes Service
+  ports:
+  - protocol: TCP
+    port: 3000 #Service port
+    targetPort: 3000 #The port for the React.js application container
