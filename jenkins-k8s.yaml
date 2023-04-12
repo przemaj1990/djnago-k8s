@@ -1,13 +1,13 @@
 pipeline {
   environment {
-    dockerimagename = "bravinwasike/react-app"
+    dockerimagename = "przemaj1990/do180-quote-php"
     dockerImage = ""
   }
   agent any
   stages {
     stage('Checkout Source') {
       steps {
-        git 'https://github.com/Bravinsimiyu/jenkins-kubernetes-deployment.git'
+        git 'https://github.com/przemaj1990/djnago-k8s.git'
       }
     }
     stage('Build image') {
