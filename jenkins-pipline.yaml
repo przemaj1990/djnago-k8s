@@ -73,10 +73,6 @@ pipeline {
                 input 'Does the staging environment look OK?'
                 milestone(1)
                 echo 'make publish'
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'test-k8s.yaml',
-                    enableConfigSubstitution: true
             }
         }
     }
