@@ -1,10 +1,13 @@
 pipeline {
+  
   environment {
     dockerimagename = "przemaj1990/do180-quote-php"
     dockerImage = ""
   }
   agent any
+  
   stages {
+  
     stage('Checkout Source') {
       steps {
             sh 'mkdir -p Module1'
@@ -16,6 +19,7 @@ pipeline {
             }
         }
     }
+    
     stage('Build image') {
       steps{
         script {
@@ -23,9 +27,10 @@ pipeline {
         }
       }
     }
+    
     stage('Pushing Image') {
       environment {
-registryCredential = 'dockerhub-credentials'
+          registryCredential = 'dockerhub-credentials'
            }
       steps{
         script {
@@ -33,7 +38,8 @@ registryCredential = 'dockerhub-credentials'
           }
         }
       }
-    }
+    
+    
     stage('Deploying container to Kubernetes') {
       steps {
         script {
@@ -42,5 +48,6 @@ registryCredential = 'dockerhub-credentials'
         }
       }
     }
-  }
 
+  }
+}
