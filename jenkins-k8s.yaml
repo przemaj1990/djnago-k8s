@@ -1,53 +1,105 @@
-pipeline {
-  
-  environment {
-    dockerimagename = "przemaj1990/do180-quote-php"
-    dockerImage = ""
-  }
-  agent any
-  
-  stages {
-  
-    stage('Checkout Source') {
-      steps {
-            sh 'mkdir -p Module1'
-            dir("Module1")
-            {
-                git branch: "main",
-                credentialsId: 'github_api_key',
-                url: 'https://github.com/przemaj1990/djnago-k8s.git'
+pipeline { 
+    agent any 
+    
+    environment {
+        TEST="test"
+        DOCKER_IMAGE_NAME = "willbla/train-schedule"
+   }
+   
+    options {
+        skipStagesAfterUnstable()
+    }
+    
+    stages {
+        
+        stage('Prepare enviroment') { 
+            steps { 
+                script {
+                    try {
+                        sh """
+                            python3 -m venv ${WORKSPACE}/.venv_${BUILD_NUMBER}
+                            echo ${WORKSPACE}/.venv_${BUILD_NUMBER}
+                            . ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
+                            python3 -m pip install --upgrade pip
+                            pip install --quiet -r ${WORKSPACE}/dev/django-k8s/web/requirements.txt
+                        """
+                        } catch (err) {
+                            echo "Create virtual environment failed: ${err.getMessage()}"
+                            error('Failed to prepare virtual environment, please check logs')
+                        }
+                    }
             }
         }
-    }
-    
-    stage('Build image') {
-      steps{
-        script {
-          echo 'Build image'
+        
+        stage('Test') { 
+            steps { 
+                script {
+                try {
+                sh """
+                . ${WORKSPACE}/.venv_${BUILD_NUMBER}/bin/activate
+                python3 ${WORKSPACE}/dev/django-k8s/web/manage.py test
+                echo 'test'
+                """
+                }catch (err) {
+                            echo "Create virtual environment failed: ${err.getMessage()}"
+                            error('Failed to prepare virtual environment, please check logs')
+                        }
+                }
+            }
         }
-      }
-    }
-    
-    stage('Pushing Image') {
-      environment {
-          registryCredential = 'dockerhub-credentials'
-           }
-      steps{
-        script {
-          echo 'Pushing Image'
-          }
+        
+        stage('Run on remote host'){
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'ubuntu18size1_credentials', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                    sshPublisher(
+                        failOnError: true,
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'Ubuntu18Size1',
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$USERPASS"
+                                ], 
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: '/**',
+                                        remoteDirectory: '/tmp',
+                                        execCommand: 'ip a'
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                }
+            }
         }
-      }
-    
-    
-    stage('Deploying container to Kubernetes') {
-      steps {
-        script {
-        echo 'Deploying container to Kubernetes'
-          kubernetesDeploy(configs: "deployment.yaml")
+        
+        stage('Deploy') {
+            steps {
+                input 'Does the staging environment look OK?'
+                milestone(1)
+                withCredentials([usernamePassword(credentialsId: 'ubuntu18size1_credentials', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                sshPublisher(
+                        failOnError: true,
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'Ubuntu18Size1',
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$USERPASS"
+                                ], 
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: '/**',
+                                        remoteDirectory: '/tmp',
+                                        execCommand: 'kubectl get nodes'
+                                    )
+                
+                }
+            }
         }
-      }
+    
     }
-
-  }
 }
