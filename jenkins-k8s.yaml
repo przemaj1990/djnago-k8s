@@ -96,8 +96,12 @@ pipeline {
                                         remoteDirectory: '/tmp',
                                         execCommand: 'kubectl get nodes'
                                     )
+                                ]
+                            )
+                        ]
+                )
                 
-                }
+            }
             }
         }
     
