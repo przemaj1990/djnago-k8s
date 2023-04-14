@@ -19,19 +19,17 @@ pipeline {
     stage('Build image') {
       steps{
         script {
-          echo 'dockerImage = docker.build dockerimagename'
+          echo 'Build image'
         }
       }
     }
     stage('Pushing Image') {
       environment {
-      echo 'Pushing Image'
-#                registryCredential = 'dockerhub-credentials'
+registryCredential = 'dockerhub-credentials'
            }
       steps{
         script {
-#           docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-#             dockerImage.push("latest")
+          echo 'Pushing Image'
           }
         }
       }
