@@ -43,4 +43,4 @@ registryCredential = 'dockerhub-credentials'
       }
     }
   }
-}
+
